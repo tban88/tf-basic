@@ -1,13 +1,16 @@
+# Define provided: AWS
 provider "aws" {
   region = var.region
 }
 
+# Create new VPC
 resource "aws_vpc" "prod_vpc" {
   cidr_block = var.cidr_blocks["vpc"]
   tags = {
     "Name" = "DEVOPS-VPC-PROD"
   }
 }
+
 # Internet Gateway for Public Subnet
 resource "aws_internet_gateway" "prod_igw" {
   vpc_id = aws_vpc.prod_vpc.id
@@ -22,6 +25,8 @@ resource "aws_eip" "nat_eip" {
   vpc        = true
   depends_on = [aws_internet_gateway.prod_igw]
 }
+
+# Create private subnet A
 resource "aws_subnet" "prv-subnetA" {
     vpc_id = aws_vpc.prod_vpc.id
     cidr_block = var.cidr_blocks["priv-subnetA"]
@@ -33,6 +38,7 @@ resource "aws_subnet" "prv-subnetA" {
     depends_on = [aws_vpc.prod_vpc]
 }  
 
+# Create public subnet A
 resource "aws_subnet" "pub-subnetA" {
     vpc_id = aws_vpc.prod_vpc.id
     cidr_block = var.cidr_blocks["pub-subnetA"]
@@ -44,7 +50,7 @@ resource "aws_subnet" "pub-subnetA" {
     depends_on = [aws_vpc.prod_vpc]
 }  
 
-# NAT
+# Create NAT
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.pub-subnetA.id
@@ -55,7 +61,7 @@ resource "aws_nat_gateway" "nat" {
   }
 }
 
-# Routing tables to route traffic for Private Subnet
+# Create routing tables to route traffic for Private Subnet
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.prod_vpc.id
 
@@ -65,7 +71,7 @@ resource "aws_route_table" "private" {
   }
 }
 
-# Routing tables to route traffic for Public Subnet
+# Create routing tables to route traffic for Public Subnet
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.prod_vpc.id
 
@@ -75,14 +81,14 @@ resource "aws_route_table" "public" {
   }
 }
 
-# Route for Internet Gateway
+# Create route for Internet Gateway
 resource "aws_route" "public_internet_gateway" {
   route_table_id         = aws_route_table.public.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.prod_igw.id
 }
 
-# Route for NAT
+# Create route for NAT
 resource "aws_route" "private_nat_gateway" {
   route_table_id         = aws_route_table.private.id
   destination_cidr_block = "0.0.0.0/0"
@@ -102,8 +108,8 @@ resource "aws_route_table_association" "private" {
 
 # Default Security Group of VPC
 resource "aws_security_group" "default" {
-  name        = "DEVOPS-default-sg"
-  description = "Default SG to alllow traffic from the VPC"
+  name        = "DEVOPS-SSH-HTTPS-HTTP"
+  description = "Allows basic inbound connectivity via HTTP(s) and SSH"
   vpc_id      = aws_vpc.prod_vpc.id
   depends_on = [
     aws_vpc.prod_vpc
@@ -117,6 +123,21 @@ resource "aws_security_group" "default" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+      description = "HTTP access"
+      from_port = "80"
+      to_port   = "80"
+      protocol  = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+
+  ingress {
+      description = "HTTPS access"
+      from_port = "443"
+      to_port   = "443"
+      protocol  = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
   egress {
     from_port        = 0
     to_port          = 0
