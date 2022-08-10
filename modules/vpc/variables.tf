@@ -3,34 +3,57 @@ variable "region" {
   default = "us-east-1"
 }
 
+variable "environments" {
+  type    = map
+  default = {
+    "prod" = "PROD"
+    "nonprod" = "NONPROD"
+    "qa" = "QA"
+    "uat" = "UAT"
+    "feature" = "FEATURE"
+  }
+}
+
+# /22 mask allows for 1022 usable hosts per subnet
 variable "cidr_blocks" {
     type = map
     default = {
-        "vpc" = "10.10.0.0/16"
-        "priv-subnetA" = "10.10.0.0/24"
-        "priv-subnetB" = "10.10.1.0/24"
-        "pub-subnetA" = "10.10.2.0/24"
-        "pub-subnetB" = "10.10.3.0/24"
+        "prod-vpc" = "10.10.0.0/16"
+        "prod-prv-cidr-A" = "10.10.0.0/22"
+        "prod-prv-cidr-B" = "10.10.4.0/22"
+        "prod-pub-cidr-A" = "10.10.8.0/22"
+        "prod-pub-cidr-B" = "10.10.12.0/22"
+        "all-ipv4" = "0.0.0.0/0"
+        "all-ipv6" = "::/0"
+        "nonprod-vpc" = "10.20.0.0/16"
+        "nonprod-prv-cidr-A" = "10.20.0.0/22"
+        "nonprod-prv-cidr-B" = "10.20.4.0/22"
+        "nonprod-pub-cidr-A" = "10.20.8.0/22"
+        "nonprod-pub-cidr-B" = "10.20.12.0/22"
     }
 }
 
 variable "AZ-names" {
     type = map
     default = {
-        "privateA" = "us-east-1a"
-        "privateB" = "us-east-1b"
-        "publicA" = "us-east-1a"
-        "publicB" = "us-east-1b"
+        "prv-az-A" = "us-east-1a"
+        "prv-az-B" = "us-east-1b"
+        "pub-az-A" = "us-east-1a"
+        "pub-az-B" = "us-east-1b"
     }
 }
 
 variable "subnet_tags" {
     type = map
     default = {
-        "privateA" = "PROD-PRIV-A"
-        "privateB" = "PROD-PRIV-B"
-        "publicA" = "PROD-PUB-A"
-        "publicB" = "PROD-PUB-B" 
+        "prod-prv-tag-A" = "PROD-PRIV-A"
+        "prod-prv-tag-B" = "PROD-PRIV-B"
+        "prod-pub-tag-A" = "PROD-PUB-A"
+        "prod-pub-tag-B" = "PROD-PUB-B" 
+        "nonprod-prv-tag-A" = "NONPROD-PRIV-A"
+        "nonprod-prv-tag-B" = "NONPROD-PRIV-B"
+        "nonprod-pub-tag-A" = "NONPROD-PUB-A"
+        "nonprod-pub-tag-B" = "NONPROD-PUB-B" 
     }
 
 }
