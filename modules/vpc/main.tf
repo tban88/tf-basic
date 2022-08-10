@@ -109,7 +109,7 @@ resource "aws_security_group" "default" {
     aws_vpc.prod_vpc
   ]
 
-    ingress {
+  ingress {
     description = "SSH access"
     from_port = "22"
     to_port   = "22"
