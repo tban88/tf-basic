@@ -30,7 +30,7 @@ variable "subnet_tags" {
         "privateA" = "PROD-PRIV-A"
         "privateB" = "PROD-PRIV-B"
         "publicA" = "PROD-PUB-A"
-        "publicB" = "PROD-PUB-B"  
+        "publicB" = "PROD-PUB-B" 
     }
 
 }

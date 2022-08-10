@@ -3,23 +3,23 @@ provider "aws" {
 }
 
 resource "aws_vpc" "devops_vpc" {
-  cidr_block = var.vpc_cidr_range
+  cidr_block = var.cidr_blocks["vpc"]
 }
 
 resource "aws_subnet" "prv-subnetA" {
     vpc_id = aws_vpc.devops_vpc.id
-    cidr_block = var.cidr_blocks.privateA
-    availability_zone = var.AZ-names.privateA
+    cidr_block = var.cidr_blocks["priv-subnetA"]
+    availability_zone = var.AZ-names["privateA"]
     tags = {
-      "name" = var.subnet_tags.privateA
+      "name" = var.subnet_tags["privateA"]
     }
 }  
 
 resource "aws_subnet" "pub-subnetA" {
     vpc_id = aws_vpc.devops_vpc.id
-    cidr_block = var.cidr_blocks.publicA
-    availability_zone = var.AZ-names.publicA
+    cidr_block = var.cidr_blocks["pub-subnetA"]
+    availability_zone = var.AZ-names["publicA"]
     tags = {
-      "name" = var.subnet_tags.publicA
+      "name" = var.subnet_tags["publicA"]
     }
 }  
