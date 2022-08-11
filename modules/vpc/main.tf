@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">=1.2"
+}
+
 # Define provided: AWS
 provider "aws" {
   region = var.region
