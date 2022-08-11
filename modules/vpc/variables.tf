@@ -3,6 +3,251 @@ variable "region" {
   default = "us-east-1"
 }
 
+variable "prod_vpc_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "nonprod_vpc_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "prod_prv_subnet_A_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "prod_prv_subnet_B_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "prod_pub_subnet_A_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "prod_pub_subnet_B_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "nonprod_prv_subnet_A_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "nonprod_prv_subnet_B_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "nonprod_pub_subnet_A_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "nonprod_pub_subnet_B_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+variable "prod_eip_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "nonprod_eip_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "prod_nat_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "nonprod_nat_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "prod_prv_rt_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "prod_pub_rt_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "nonprod_prv_rt_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "nonprod_pub_rt_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "prod_igw_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "nonprod_igw_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+  }
+}
+
+variable "prod_df_sg_tags" {
+  type = object({
+    Name = string
+    Environment = string
+    Access = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+    Access = "value"
+  }
+}
+
+variable "nonprod_df_sg_tags" {
+  type = object({
+    Name = string
+    Environment = string
+    Access = string
+  })
+  default = {
+    Name = "value"
+    Environment = "value"
+    Access = "value"
+  }
+}
+
 variable "environments" {
   type    = map
   default = {

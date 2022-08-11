@@ -13,18 +13,13 @@ provider "aws" {
 resource "aws_vpc" "prod_vpc" {
   cidr_block = var.cidr_blocks["prod-vpc"]
   enable_dns_hostnames = true
-  tags = {
-    "Name" = "PROD-VPC"
-  }
+  tags = var.prod_vpc_tags
 }
 
 # Internet Gateway for Public Subnet - PROD
 resource "aws_internet_gateway" "prod_igw" {
   vpc_id = aws_vpc.prod_vpc.id
-  tags = {
-    Name        = "PROD-IGW"
-    Environment = var.environments["prod"]
-  }
+  tags = var.prod_igw_tags
 }
 
 # Create PRIVATE subnet A - PROD
@@ -33,10 +28,7 @@ resource "aws_subnet" "prod_prv_subnet_A" {
     cidr_block = var.cidr_blocks["prod-prv-cidr-A"]
     availability_zone = var.AZ-names["prv-az-A"]
     map_public_ip_on_launch = false
-    tags = {
-      "Name" = var.subnet_tags["prod-prv-tag-A"]
-    }
-    depends_on = [aws_vpc.prod_vpc]
+    tags = var.prod_prv_subnet_A_tags
 }  
 
 # Create PRIVATE subnet B - PROD
@@ -45,10 +37,7 @@ resource "aws_subnet" "prod_prv_subnet_B" {
     cidr_block = var.cidr_blocks["prod-prv-cidr-B"]
     availability_zone = var.AZ-names["prv-az-B"]
     map_public_ip_on_launch = false
-    tags = {
-      "Name" = var.subnet_tags["prod-prv-tag-B"]
-    }
-    depends_on = [aws_vpc.prod_vpc]
+    tags = var.prod_prv_subnet_B_tags
 }  
 
 # Create PUBLIC subnet A - PROD
@@ -57,10 +46,7 @@ resource "aws_subnet" "prod_pub_subnet_A" {
     cidr_block = var.cidr_blocks["prod-pub-cidr-A"]
     availability_zone = var.AZ-names["pub-az-A"]
     map_public_ip_on_launch = true
-    tags = {
-      "Name" = var.subnet_tags["prod-pub-tag-A"]
-    }
-    depends_on = [aws_vpc.prod_vpc]
+    tags = var.prod_pub_subnet_A_tags
 }  
 
 # Create PUBLIC subnet B - PROD
@@ -69,50 +55,33 @@ resource "aws_subnet" "prod_pub_subnet_B" {
     cidr_block = var.cidr_blocks["prod-pub-cidr-B"]
     availability_zone = var.AZ-names["pub-az-B"]
     map_public_ip_on_launch = true
-    tags = {
-      "Name" = var.subnet_tags["prod-pub-tag-B"]
-    }
-    depends_on = [aws_vpc.prod_vpc]
+    tags = var.prod_pub_subnet_B_tags
 } 
 
 # Elastic-IP (eip) for NAT - PROD
 resource "aws_eip" "prod_nat_eip" {
   vpc        = true
   depends_on = [aws_internet_gateway.prod_igw]
-  tags = {
-    "Name" = "PROD-EIP-NAT"
-  }
+  tags = var.prod_eip_tags
 }
 
 # Create NAT - PROD
 resource "aws_nat_gateway" "prod_nat" {
   allocation_id = aws_eip.prod_nat_eip.id
   subnet_id     = aws_subnet.prod_pub_subnet_A.id
-
-  tags = {
-    Name        = "PROD-NAT"
-    Environment = var.environments["prod"]
-  }
+  tags = var.prod_nat_tags
 }
 
 # Create routing tables to route traffic for Private Subnet - PROD
 resource "aws_route_table" "prod_prv_rt" {
   vpc_id = aws_vpc.prod_vpc.id
-
-  tags = {
-    Name        = "PROD-PRV-RT"
-    Environment = var.environments["prod"]
-  }
+  tags = var.prod_prv_rt_tags
 }
 
 # Create routing tables to route traffic for Public Subnet - PROD
 resource "aws_route_table" "prod_pub_rt" {
   vpc_id = aws_vpc.prod_vpc.id
-
-  tags = {
-    Name        = "PROD-PUB-RT"
-    Environment = var.environments["prod"]
-  }
+  tags = var.prod_pub_rt_tags
 }
 
 # Create route for Internet Gateway - PROD
@@ -157,13 +126,11 @@ resource "aws_route_table_association" "prod_prv_rt_asoc_B" {
 
 # Default Security Group of VPC
 resource "aws_security_group" "prod_default_sg" {
-  name        = "PROD-SSH-HTTPS-HTTP"
   description = "Allows basic inbound connectivity via HTTP(s) and SSH"
   vpc_id      = aws_vpc.prod_vpc.id
   depends_on = [
     aws_vpc.prod_vpc
   ]
-
   ingress {
     description = "SSH access"
     from_port = "22"
@@ -171,7 +138,6 @@ resource "aws_security_group" "prod_default_sg" {
     protocol  = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   ingress {
       description = "HTTP access"
       from_port = "80"
@@ -179,14 +145,13 @@ resource "aws_security_group" "prod_default_sg" {
       protocol  = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     }
-
   ingress {
       description = "HTTPS access"
       from_port = "443"
       to_port   = "443"
       protocol  = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
-    }
+  }
   egress {
     from_port        = 0
     to_port          = 0
@@ -194,10 +159,7 @@ resource "aws_security_group" "prod_default_sg" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-
-  tags = {
-    Environment = var.environments["nonprod"]
-  }
+  tags = var.prod_df_sg_tags
 }
 
 ######################## NON PROD ########################
@@ -206,18 +168,13 @@ resource "aws_security_group" "prod_default_sg" {
 resource "aws_vpc" "nonprod_vpc" {
   cidr_block = var.cidr_blocks["nonprod-vpc"]
   enable_dns_hostnames = true
-  tags = {
-    "Name" = "NONPROD-VPC"
-  }
+  tags = var.nonprod_vpc_tags
 }
 
 # Internet Gateway for Public Subnet - NONPROD
 resource "aws_internet_gateway" "nonprod_igw" {
   vpc_id = aws_vpc.nonprod_vpc.id
-  tags = {
-    Name        = "NONPROD-IGW"
-    Environment = var.environments["nonprod"]
-  }
+  tags = var.nonprod_igw_tags
 }
 
 # Create PRIVATE subnet A - NONPROD
@@ -226,10 +183,7 @@ resource "aws_subnet" "nonprod_prv_subnet_A" {
     cidr_block = var.cidr_blocks["nonprod-prv-cidr-A"]
     availability_zone = var.AZ-names["prv-az-A"]
     map_public_ip_on_launch = false
-    tags = {
-      "Name" = var.subnet_tags["nonprod-prv-tag-A"]
-    }
-    depends_on = [aws_vpc.nonprod_vpc]
+    tags = var.nonprod_prv_subnet_A_tags
 }  
 
 # Create PRIVATE subnet B - NONPROD
@@ -238,10 +192,7 @@ resource "aws_subnet" "nonprod_prv_subnet_B" {
     cidr_block = var.cidr_blocks["nonprod-prv-cidr-B"]
     availability_zone = var.AZ-names["prv-az-B"]
     map_public_ip_on_launch = false
-    tags = {
-      "Name" = var.subnet_tags["nonprod-prv-tag-B"]
-    }
-    depends_on = [aws_vpc.nonprod_vpc]
+    tags = var.nonprod_prv_subnet_B_tags
 }  
 
 # Create PUBLIC subnet A - NONPROD
@@ -250,10 +201,7 @@ resource "aws_subnet" "nonprod_pub_subnet_A" {
     cidr_block = var.cidr_blocks["nonprod-pub-cidr-A"]
     availability_zone = var.AZ-names["pub-az-A"]
     map_public_ip_on_launch = true
-    tags = {
-      "Name" = var.subnet_tags["nonprod-pub-tag-A"]
-    }
-    depends_on = [aws_vpc.nonprod_vpc]
+    tags = var.nonprod_pub_subnet_A_tags
 }  
 
 # Create PUBLIC subnet B - NONPROD
@@ -262,50 +210,33 @@ resource "aws_subnet" "nonprod_pub_subnet_B" {
     cidr_block = var.cidr_blocks["nonprod-pub-cidr-B"]
     availability_zone = var.AZ-names["pub-az-B"]
     map_public_ip_on_launch = true
-    tags = {
-      "Name" = var.subnet_tags["nonprod-pub-tag-B"]
-    }
-    depends_on = [aws_vpc.nonprod_vpc]
+    tags = var.nonprod_pub_subnet_B_tags
 } 
 
 # Elastic-IP (eip) for NAT - NONPROD
 resource "aws_eip" "nonprod_nat_eip" {
   vpc        = true
   depends_on = [aws_internet_gateway.nonprod_igw]
-  tags = {
-    "Name" = "NONPROD-EIP-NAT"
-  }
+  tags = var.nonprod_eip_tags
 }
 
 # Create NAT - NONPROD
 resource "aws_nat_gateway" "nonprod_nat" {
   allocation_id = aws_eip.nonprod_nat_eip.id
   subnet_id     = aws_subnet.nonprod_pub_subnet_A.id
-
-  tags = {
-    Name        = "NONPROD-NAT"
-    Environment = var.environments["nonprod"]
-  }
+  tags = var.nonprod_nat_tags
 }
 
 # Create routing tables to route traffic for Private Subnet - NONPROD
 resource "aws_route_table" "nonprod_prv_rt" {
   vpc_id = aws_vpc.nonprod_vpc.id
-
-  tags = {
-    Name        = "NONPROD-PRV-RT"
-    Environment = var.environments["nonprod"]
-  }
+  tags = var.nonprod_prv_rt_tags
 }
 
 # Create routing tables to route traffic for Public Subnet - NONPROD
 resource "aws_route_table" "nonprod_pub_rt" {
   vpc_id = aws_vpc.nonprod_vpc.id
-
-  tags = {
-    Name        = "NONPROD-PUB-RT"
-    Environment = var.environments["nonprod"]
-  }
+  tags = var.nonprod_pub_rt_tags
 }
 
 # Create route for Internet Gateway - NONPROD
@@ -350,13 +281,11 @@ resource "aws_route_table_association" "nonprod_prv_rt_asoc_B" {
 
 # Default Security Group of VPC
 resource "aws_security_group" "nonprod_default_sg" {
-  name        = "NONPROD-SSH-HTTPS-HTTP"
   description = "Allows basic inbound connectivity via HTTP(s) and SSH"
   vpc_id      = aws_vpc.nonprod_vpc.id
   depends_on = [
     aws_vpc.nonprod_vpc
   ]
-
   ingress {
     description = "SSH access"
     from_port = "22"
@@ -364,7 +293,6 @@ resource "aws_security_group" "nonprod_default_sg" {
     protocol  = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   ingress {
       description = "HTTP access"
       from_port = "80"
@@ -372,7 +300,6 @@ resource "aws_security_group" "nonprod_default_sg" {
       protocol  = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     }
-
   ingress {
       description = "HTTPS access"
       from_port = "443"
@@ -387,8 +314,5 @@ resource "aws_security_group" "nonprod_default_sg" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-
-  tags = {
-    Environment = var.environments["nonprod"]
-  }
+  tags = var.nonprod_df_sg_tags
 }
