@@ -3,6 +3,251 @@ variable "region" {
   default = "us-east-1"
 }
 
+variable "prod_vpc_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "PROD-VPC"
+    Environment = "PROD"
+  }
+}
+
+variable "nonprod_vpc_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "NONPROD-VPC"
+    Environment = "NONPROD"
+  }
+}
+
+variable "prod_prv_subnet_A_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "PROD-PRIV-SN-A"
+    Environment = "PROD"
+  }
+}
+
+variable "prod_prv_subnet_B_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "PROD-PRIV-SN-B"
+    Environment = "PROD"
+  }
+}
+
+variable "prod_pub_subnet_A_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "PROD-PUB-SN-A"
+    Environment = "PROD"
+  }
+}
+
+variable "prod_pub_subnet_B_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "PROD-PUB-SN-B"
+    Environment = "PROD"
+  }
+}
+
+variable "nonprod_prv_subnet_A_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "NONPROD-PRIV-SN-A"
+    Environment = "NONPROD"
+  }
+}
+
+variable "nonprod_prv_subnet_B_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "NONPROD-PRIV-SN-B"
+    Environment = "NONPROD"
+  }
+}
+
+variable "nonprod_pub_subnet_A_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "NONPROD-PUB-SN-A"
+    Environment = "NONPROD"
+  }
+}
+
+variable "nonprod_pub_subnet_B_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "NONPROD-PUB-SN-B"
+    Environment = "value"
+  }
+}
+variable "prod_eip_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "PROD-EIP-NAT"
+    Environment = "PROD"
+  }
+}
+
+variable "nonprod_eip_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "NONPROD-EIP-NAT"
+    Environment = "NONPROD"
+  }
+}
+
+variable "prod_nat_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "PROD-NAT"
+    Environment = "PROD"
+  }
+}
+
+variable "nonprod_nat_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "NONPROD-NAT"
+    Environment = "NONPROD"
+  }
+}
+
+variable "prod_prv_rt_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "PROD-PRV-RT"
+    Environment = "PROD"
+  }
+}
+
+variable "prod_pub_rt_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "PROD-PUB-RT"
+    Environment = "PROD"
+  }
+}
+
+variable "nonprod_prv_rt_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "NONPROD-PRV-RT"
+    Environment = "NONPROD"
+  }
+}
+
+variable "nonprod_pub_rt_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "NONPROD-PUB-RT"
+    Environment = "NONPROD"
+  }
+}
+
+variable "prod_igw_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "PROD-IGW"
+    Environment = "PROD"
+  }
+}
+
+variable "nonprod_igw_tags" {
+  type = object({
+    Name = string
+    Environment = string
+  })
+  default = {
+    Name = "NONPROD-IGW"
+    Environment = "NONPROD"
+  }
+}
+
+variable "prod_df_sg_tags" {
+  type = object({
+    Name = string
+    Environment = string
+    Access = string
+  })
+  default = {
+    Name = "PROD-DEFAULT-SG"
+    Environment = "PROD"
+    Access = "HTTPS-HTTP-SSH"
+  }
+}
+
+variable "nonprod_df_sg_tags" {
+  type = object({
+    Name = string
+    Environment = string
+    Access = string
+  })
+  default = {
+    Name = "NONPROD-DEFAULT-SG"
+    Environment = "NONPROD"
+    Access = "HTTPS-HTTP-SSH"
+  }
+}
+
 variable "environments" {
   type    = map
   default = {
@@ -41,19 +286,4 @@ variable "AZ-names" {
         "pub-az-A" = "us-east-1a"
         "pub-az-B" = "us-east-1b"
     }
-}
-
-variable "subnet_tags" {
-    type = map
-    default = {
-        "prod-prv-tag-A" = "PROD-PRIV-A"
-        "prod-prv-tag-B" = "PROD-PRIV-B"
-        "prod-pub-tag-A" = "PROD-PUB-A"
-        "prod-pub-tag-B" = "PROD-PUB-B" 
-        "nonprod-prv-tag-A" = "NONPROD-PRIV-A"
-        "nonprod-prv-tag-B" = "NONPROD-PRIV-B"
-        "nonprod-pub-tag-A" = "NONPROD-PUB-A"
-        "nonprod-pub-tag-B" = "NONPROD-PUB-B" 
-    }
-
 }
