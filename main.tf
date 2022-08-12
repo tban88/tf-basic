@@ -7,6 +7,6 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "./vpc"
+  source = "./modules/vpc"
   region = var.main_region
 }
