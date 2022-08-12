@@ -1,13 +1,83 @@
+######################## TERRAFORM CONFIG ########################
+
 terraform {
   required_version = ">=1.2"
 }
+
+######################## PROVIDERS ########################
 
 # Define provided: AWS
 provider "aws" {
   region = var.region
 }
 
-######################## PROD ########################
+######################## DATA: VPC ########################
+
+### PROD ###
+
+data "aws_vpc" "prod_vpc_data" {
+  id = aws_vpc.prod_vpc.id
+}
+
+### NONPROD ###
+
+data "aws_vpc" "nonprod_vpc_data" {
+  id = aws_vpc.nonprod_vpc.id
+}
+
+######################## DATA: SUBNETS ########################
+
+### PROD ###
+
+data "aws_subnet" "prod_prv_subnet_A_data" {
+  id = aws_subnet.prod_prv_subnet_A.id
+}
+
+data "aws_subnet" "prod_prv_subnet_B_data" {
+  id = aws_subnet.prod_prv_subnet_B.id
+}
+
+data "aws_subnet" "prod_pub_subnet_A_data" {
+  id = aws_subnet.prod_pub_subnet_A.id
+}
+
+data "aws_subnet" "prod_pub_subnet_B_data" {
+  id = aws_subnet.prod_pub_subnet_B.id
+}
+
+### NONPROD ###
+
+data "aws_subnet" "nonprod_prv_subnet_A_data" {
+  id = aws_subnet.nonprod_prv_subnet_A.id
+}
+
+data "aws_subnet" "nonprod_prv_subnet_B_data" {
+  id = aws_subnet.nonprod_prv_subnet_B.id
+}
+
+data "aws_subnet" "nonprod_pub_subnet_A_data" {
+  id = aws_subnet.nonprod_pub_subnet_A.id
+}
+
+data "aws_subnet" "nonprod_pub_subnet_B_data" {
+  id = aws_subnet.nonprod_pub_subnet_B.id
+}
+
+######################## DATA: SECURITY GROUPS ########################
+
+### PROD ###
+
+data "aws_security_group" "prod_df_sg_data" {
+  id = aws_security_group.prod_default_sg.id
+}
+
+### NONPROD ###
+
+data "aws_security_group" "nonprod_df_sg_data" {
+  id = aws_security_group.nonprod_default_sg.id
+}
+
+######################## RESOURCES: PROD ########################
 
 # Create new VPC - PROD
 resource "aws_vpc" "prod_vpc" {
@@ -162,7 +232,7 @@ resource "aws_security_group" "prod_default_sg" {
   tags = var.prod_df_sg_tags
 }
 
-######################## NON PROD ########################
+######################## RESOURCES: NONPROD ########################
 
 # Create new VPC - NONPROD
 resource "aws_vpc" "nonprod_vpc" {

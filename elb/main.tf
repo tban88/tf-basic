@@ -6,7 +6,3 @@ provider "aws" {
   region = var.main_region
 }
 
-module "vpc" {
-  source = "./vpc"
-  region = var.main_region
-}
