@@ -53,5 +53,6 @@ module "ec2-jenkins" {
   #subnet_id = data.aws_subnet.data_prod_pub_subnet_A_id.id
   tg_arn = module.alb.jenkins_tg_arn
   security_group_id = module.vpc.prod_df_sg_data.id
+  ec2_name = "JENKINS"
   #security_group_id = data.aws_security_group.prod_default_sg.id
 }
