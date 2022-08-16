@@ -23,7 +23,7 @@ resource "aws_instance" "prod_ec2_jenkins" {
   user_data = file("./modules/ec2/user_data/jenkins.sh")
 }
 
-resource "aws_lb_target_group_attachment" "test" {
+resource "aws_lb_target_group_attachment" "tg_ec2_jenkins_asoc" {
   target_group_arn = var.tg_arn
   target_id        = aws_instance.prod_ec2_jenkins.id
   port             = 8080
