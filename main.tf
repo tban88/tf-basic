@@ -54,5 +54,6 @@ module "ec2-jenkins" {
   tg_arn = module.alb.jenkins_tg_arn
   security_group_id = module.vpc.prod_df_sg_data.id
   ec2_name = "JENKINS"
+  port = 8080
   #security_group_id = data.aws_security_group.prod_default_sg.id
 }
