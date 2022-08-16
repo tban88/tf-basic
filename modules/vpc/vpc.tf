@@ -196,6 +196,7 @@ resource "aws_route_table_association" "prod_prv_rt_asoc_B" {
 
 # Default Security Group of VPC
 resource "aws_security_group" "prod_default_sg" {
+  name = "PROD-DEFAULT-SG"
   description = "Allows basic inbound connectivity via HTTP(s) and SSH"
   vpc_id      = aws_vpc.prod_vpc.id
   depends_on = [
@@ -222,6 +223,14 @@ resource "aws_security_group" "prod_default_sg" {
       protocol  = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
   }
+
+  ingress {
+      description = "JENKINS access"
+      from_port = "8080"
+      to_port   = "8080"
+      protocol  = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
   egress {
     from_port        = 0
     to_port          = 0
@@ -351,6 +360,7 @@ resource "aws_route_table_association" "nonprod_prv_rt_asoc_B" {
 
 # Default Security Group of VPC
 resource "aws_security_group" "nonprod_default_sg" {
+  name = "NONPROD-DEFAULT-SG"
   description = "Allows basic inbound connectivity via HTTP(s) and SSH"
   vpc_id      = aws_vpc.nonprod_vpc.id
   depends_on = [
@@ -374,6 +384,14 @@ resource "aws_security_group" "nonprod_default_sg" {
       description = "HTTPS access"
       from_port = "443"
       to_port   = "443"
+      protocol  = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+
+  ingress {
+      description = "JENKINS access"
+      from_port = "8080"
+      to_port   = "8080"
       protocol  = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     }

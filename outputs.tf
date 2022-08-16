@@ -63,3 +63,22 @@ output "data_prod_df_sg_id" {
 output "data_nonprod_df_sg_id" {
     value = module.vpc.nonprod_df_sg_data.id
 }
+
+######################## DATA: ELB ########################
+
+output "jenkins_target_group_arn" {
+    value = module.alb.jenkins_tg_arn
+}
+
+output "prod_alb_public_arn" {
+    value = module.alb.prod_alb_public_arn
+}
+
+output "prod_alb_public_dns" {
+    value = module.alb.alb_dns_prod_public
+}
+/*
+output "TEST-OUT" {
+    value = data.aws_subnet.data_prod_pub_subnet_A_id.id
+}
+*/
