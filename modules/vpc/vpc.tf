@@ -25,6 +25,36 @@ data "aws_vpc" "nonprod_vpc_data" {
   id = aws_vpc.nonprod_vpc.id
 }
 
+######################## LOCALS ########################
+
+locals {
+  ingress_rules = [{
+    port = 443
+    description = "HTTPS Access"
+    protocol = "tcp"
+  },
+  {
+    port = 8080
+    description = "Jenkins Access"
+    protocol = "tcp"
+  },
+  {
+    port = 22
+    description = "SSH Access"
+    protocol = "tcp"
+  },
+  {
+    port = 80
+    description = "HTTP Access"
+    protocol = "tcp"
+  },
+  {
+    port = 943
+    description = "VPN Access"
+    protocol = "tcp"
+  }]
+}
+
 ######################## DATA: SUBNETS ########################
 
 ### PROD ###
@@ -202,6 +232,20 @@ resource "aws_security_group" "prod_default_sg" {
   depends_on = [
     aws_vpc.prod_vpc
   ]
+
+  dynamic "ingress" {
+    for_each = local.ingress_rules
+    iterator = rule 
+
+    content {
+      description = rule.value.description
+      from_port = rule.value.port
+      to_port = rule.value.port
+      protocol = rule.value.protocol
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+  /*
   ingress {
     description = "SSH access"
     from_port = "22"
@@ -231,6 +275,7 @@ resource "aws_security_group" "prod_default_sg" {
       protocol  = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     }
+    */
   egress {
     from_port        = 0
     to_port          = 0
@@ -366,6 +411,20 @@ resource "aws_security_group" "nonprod_default_sg" {
   depends_on = [
     aws_vpc.nonprod_vpc
   ]
+
+    dynamic "ingress" {
+    for_each = local.ingress_rules
+    iterator = rule 
+
+    content {
+      description = rule.value.description
+      from_port = rule.value.port
+      to_port = rule.value.port
+      protocol = rule.value.protocol
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+  /*
   ingress {
     description = "SSH access"
     from_port = "22"
@@ -395,6 +454,7 @@ resource "aws_security_group" "nonprod_default_sg" {
       protocol  = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     }
+    */
   egress {
     from_port        = 0
     to_port          = 0

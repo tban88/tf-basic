@@ -13,24 +13,16 @@ provider "aws" {
 
 ######################## RESOURCES: PROD ########################
 
-locals {
-  ec2_instance = aws_instance.prod_ec2_jenkins.id
-}
-resource "aws_instance" "prod_ec2_jenkins" {
-  ami = "ami-052efd3df9dad4825"
+resource "aws_instance" "new_ec2" {
+  ami = var.ami_id
   instance_type = var.instance_type
-  associate_public_ip_address = true
+  associate_public_ip_address = var.public_ip
   subnet_id = var.subnet_id
-  key_name = "test-devops"
+  key_name = var.key_pair
   vpc_security_group_ids = ["${var.security_group_id}"]
-  user_data = file("./modules/ec2/user_data/jenkins.sh")
+  user_data = file("${var.user_data}")
   tags = {
     "Name" = var.ec2_name
   }
 }
 
-resource "aws_lb_target_group_attachment" "tg_ec2_jenkins_asoc" {
-  target_group_arn = var.tg_arn
-  target_id        = local.ec2_instance
-  port             = var.port
-}

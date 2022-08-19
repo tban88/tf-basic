@@ -67,15 +67,15 @@ output "data_nonprod_df_sg_id" {
 ######################## DATA: ELB ########################
 
 output "jenkins_target_group_arn" {
-    value = module.alb.jenkins_tg_arn
+    value = module.prod_tg_jenkins.tg_arn
 }
 
 output "prod_alb_public_arn" {
-    value = module.alb.prod_alb_public_arn
+    value = module.prod_pub_lb.lb_arn
 }
 
 output "prod_alb_public_dns" {
-    value = module.alb.alb_dns_prod_public
+    value = module.prod_pub_lb.dns_url
 }
 /*
 output "TEST-OUT" {

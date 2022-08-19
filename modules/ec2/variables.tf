@@ -8,10 +8,6 @@ variable "instance_type" {
   default = "t2.micro"
 }
 
-variable "port" {
-  type = number
-  default = 80
-}
 variable "vpc_id" {
   type = string
 }
@@ -19,12 +15,27 @@ variable "subnet_id" {
   type = string
 }
 
-variable "tg_arn" {
+variable "security_group_id" {
   type = string
 }
 
-variable "security_group_id" {
+variable "ami_id" {
   type = string
+}
+
+variable "public_ip" {
+  type = bool
+  default = false
+}
+
+variable "key_pair" {
+  type = string
+  default = "test-devops"
+}
+
+variable "user_data" {
+  type = string
+  default = "./modules/ec2/user_data/default.sh"
 }
 
 variable "ec2_name" {
