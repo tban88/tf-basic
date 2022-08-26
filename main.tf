@@ -21,6 +21,7 @@ data "aws_subnet" "data_prod_pub_subnet_A_id" {
 }
 */
 locals {
+
   prod_prv_subnets = ["${module.vpc.prod_prv_subnet_A_data.id}", "${module.vpc.prod_prv_subnet_B_data.id}"]
   prod_pub_subnets = ["${module.vpc.prod_pub_subnet_A_data.id}", "${module.vpc.prod_pub_subnet_B_data.id}"]
   nonprod_prv_subnets = ["${module.vpc.nonprod_prv_subnet_A_data.id}", "${module.vpc.nonprod_prv_subnet_B_data.id}"]
@@ -32,10 +33,32 @@ locals {
   jenkins_tg_arn = module.prod_tg_jenkins.tg_arn
   prod_alb_public_arn = module.prod_pub_lb.lb_arn
   pub_lb_dns = module.prod_pub_lb.dns_url
+
+  #To use in SG ingress/egress rules (Dynamic Blocks)
+  sg_ingress = [{
+    port = 80
+    description = "SG Description - test"
+    protocol = "tcp"
+    cidr_blocks = "0.0.0.0/0"
+  },
+  {
+    port = 443
+    description = "SG Description - test"
+    protocol = "tcp"
+    cidr_blocks = "0.0.0.0/0"
+  }]
+
+  sg_egress = [{
+    port = 0
+    protocol = "-1"
+    cidr_blocks = "0.0.0.0/0"
+    ipv6_cidr_blocks = "::/0"
+  }]
 }
 
+#Creates baseline networking resources, for new ones, refer to vpc module 
 module "vpc" {
-  source = "./modules/vpc"
+  source = "./modules/vpc_base"
   region = var.main_region
 }
 
@@ -103,4 +126,44 @@ module "ec2-openvpn" {
   user_data = "./modules/ec2/user_data/openvpn.sh"
   ec2_name = "OPENVPN"
   public_ip = true
+}
+
+## TEST BLOCKS
+
+module "new_vpc" {
+  source = "./modules/vpc"
+  cidr_block = "192.168.0.0/16"
+  vpc_name = "devops"
+}
+
+module "test-sg" {
+  source = "./modules/security_group"
+  sg_name = "test-DEVOPS"
+  sg_description = "Devops test security group"
+  vpc_id = module.new_vpc.vpc_id
+  ingress_object_rules = local.sg_ingress
+  egress_object_rules = local.sg_egress
+}
+module "test-subnet-pub" {
+  source = "./modules/subnet/public"
+  sn_name = "test-public"
+  vpc_id = module.new_vpc.vpc_id
+  cidr_block = "192.168.100.0/24"
+  az_name = "us-east-1c"
+  igw_id = module.new_vpc.igw_id
+}
+
+module "new_nat" {
+  source = "./modules/nat"
+  nat_name = "test"
+  subnet_id = module.test-subnet-pub.subnet_id
+}
+
+module "test-subnet-prv" {
+  source = "./modules/subnet/private"
+  sn_name = "test-private"
+  vpc_id = module.new_vpc.vpc_id
+  cidr_block = "192.168.200.0/24"
+  az_name = "us-east-1c"
+  nat_id = module.new_nat.nat_id
 }
