@@ -4,6 +4,12 @@ variable "region" {
   description = "Main region"
 }
 
+variable "aws_profile" {
+  type = string
+  description = "AWS profile"
+  default = "terraform"
+}
+
 variable "tg_arn" {
   type = string
   description = "Target Group ARN"

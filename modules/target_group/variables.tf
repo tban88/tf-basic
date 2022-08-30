@@ -5,6 +5,12 @@ variable "region" {
   default = "us-east-1"
 }
 
+variable "aws_profile" {
+  type = string
+  description = "AWS profile"
+  default = "terraform"
+}
+
 variable "tg_name" {
     type = string
     description = "Target group's name"

@@ -9,6 +9,7 @@ terraform {
 # Define provided: AWS
 provider "aws" {
   region = var.region
+  profile = var.aws_profile
 }
 
 ######################## DATA: VPC ########################
@@ -34,11 +35,6 @@ locals {
     protocol = "tcp"
   },
   {
-    port = 8080
-    description = "Jenkins Access"
-    protocol = "tcp"
-  },
-  {
     port = 22
     description = "SSH Access"
     protocol = "tcp"
@@ -46,11 +42,6 @@ locals {
   {
     port = 80
     description = "HTTP Access"
-    protocol = "tcp"
-  },
-  {
-    port = 943
-    description = "VPN Access"
     protocol = "tcp"
   }]
 }

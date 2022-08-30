@@ -5,6 +5,12 @@ variable "region" {
   default = "us-east-1"
 }
 
+variable "aws_profile" {
+  type = string
+  description = "AWS profile"
+  default = "terraform"
+}
+
 variable "internal" {
     type = bool
     description = "LB is private or not | true = internal | false = public"

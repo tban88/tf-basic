@@ -3,6 +3,12 @@ variable "region" {
   default = "us-east-1"
 }
 
+variable "aws_profile" {
+  type = string
+  description = "AWS profile"
+  default = "terraform"
+}
+
 variable "instance_type" {
   type = string
   default = "t2.micro"

@@ -9,6 +9,7 @@ terraform {
 # Define provided: AWS
 provider "aws" {
   region = var.region
+  profile = var.aws_profile
 }
 
 resource "aws_lb_target_group" "new_tg" {
