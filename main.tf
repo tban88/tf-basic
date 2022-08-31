@@ -1,5 +1,11 @@
 terraform {
   required_version = ">=1.2"
+  backend "s3" {
+    bucket = "terraform-devops-sandbox-001"
+    key = "terraform/state/terraform.tfstate"
+    region = "us-east-1"
+    profile = "sandbox"
+  }
 }
 
 provider "aws" {
@@ -9,7 +15,7 @@ provider "aws" {
 
 locals {
 
-  aws_profile         = "default"
+  aws_profile         = "sandbox"
   prod_prv_subnets    = ["${module.vpc.prod_prv_subnet_A_data.id}", "${module.vpc.prod_prv_subnet_B_data.id}"]
   prod_pub_subnets    = ["${module.vpc.prod_pub_subnet_A_data.id}", "${module.vpc.prod_pub_subnet_B_data.id}"]
   nonprod_prv_subnets = ["${module.vpc.nonprod_prv_subnet_A_data.id}", "${module.vpc.nonprod_prv_subnet_B_data.id}"]
@@ -30,7 +36,7 @@ module "prod_pub_lb" {
   prod_prv_subnets = local.prod_prv_subnets
   prod_pub_subnets = local.prod_pub_subnets
   prod_default_sg  = ["${module.vpc.prod_df_sg_data.id}"]
-  prod_vpc         = "${module.vpc.prod_vpc_data.id}"
+  prod_vpc         = module.vpc.prod_vpc_data.id
   lb_name          = "PROD-WEB-PUBLIC"
   internal         = false
 }
