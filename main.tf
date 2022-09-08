@@ -1,11 +1,13 @@
 terraform {
   required_version = ">=1.2"
+  /*
   backend "s3" {
     bucket = "terraform-devops-sandbox-001"
     key = "terraform/state/terraform.tfstate"
     region = "us-east-1"
-    profile = "sandbox"
+    profile = "default"
   }
+  */
 }
 
 provider "aws" {
@@ -15,7 +17,7 @@ provider "aws" {
 
 locals {
 
-  aws_profile         = "sandbox"
+  aws_profile         = "default"
   prod_prv_subnets    = ["${module.vpc.prod_prv_subnet_A_data.id}", "${module.vpc.prod_prv_subnet_B_data.id}"]
   prod_pub_subnets    = ["${module.vpc.prod_pub_subnet_A_data.id}", "${module.vpc.prod_pub_subnet_B_data.id}"]
   nonprod_prv_subnets = ["${module.vpc.nonprod_prv_subnet_A_data.id}", "${module.vpc.nonprod_prv_subnet_B_data.id}"]
