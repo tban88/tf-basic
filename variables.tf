@@ -6,5 +6,5 @@ variable "main_region" {
 variable "aws_profile" {
   type        = string
   description = "AWS profile"
-  default     = "terraform"
+  default     = "default"
 }
