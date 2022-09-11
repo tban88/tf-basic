@@ -8,7 +8,7 @@ terraform {
 
 # Define provided: AWS
 provider "aws" {
-  region = var.region
+  region  = var.region
   profile = var.aws_profile
 }
 
@@ -30,19 +30,24 @@ data "aws_vpc" "nonprod_vpc_data" {
 
 locals {
   ingress_rules = [{
-    port = 443
+    port        = 443
     description = "HTTPS Access"
-    protocol = "tcp"
-  },
-  {
-    port = 22
-    description = "SSH Access"
-    protocol = "tcp"
-  },
-  {
-    port = 80
-    description = "HTTP Access"
-    protocol = "tcp"
+    protocol    = "tcp"
+    },
+    {
+      port        = 22
+      description = "SSH Access"
+      protocol    = "tcp"
+    },
+    {
+      port        = 80
+      description = "HTTP Access"
+      protocol    = "tcp"
+    },
+    {
+      port        = 8080
+      description = "JENKINS Access"
+      protocol    = "tcp"
   }]
 }
 
@@ -102,77 +107,77 @@ data "aws_security_group" "nonprod_df_sg_data" {
 
 # Create new VPC - PROD
 resource "aws_vpc" "prod_vpc" {
-  cidr_block = var.cidr_blocks["prod-vpc"]
+  cidr_block           = var.cidr_blocks["prod-vpc"]
   enable_dns_hostnames = true
-  tags = var.prod_vpc_tags
+  tags                 = var.prod_vpc_tags
 }
 
 # Internet Gateway for Public Subnet - PROD
 resource "aws_internet_gateway" "prod_igw" {
   vpc_id = aws_vpc.prod_vpc.id
-  tags = var.prod_igw_tags
+  tags   = var.prod_igw_tags
 }
 
 # Create PRIVATE subnet A - PROD
 resource "aws_subnet" "prod_prv_subnet_A" {
-    vpc_id = aws_vpc.prod_vpc.id
-    cidr_block = var.cidr_blocks["prod-prv-cidr-A"]
-    availability_zone = var.AZ-names["prv-az-A"]
-    map_public_ip_on_launch = false
-    tags = var.prod_prv_subnet_A_tags
-}  
+  vpc_id                  = aws_vpc.prod_vpc.id
+  cidr_block              = var.cidr_blocks["prod-prv-cidr-A"]
+  availability_zone       = var.AZ-names["prv-az-A"]
+  map_public_ip_on_launch = false
+  tags                    = var.prod_prv_subnet_A_tags
+}
 
 # Create PRIVATE subnet B - PROD
 resource "aws_subnet" "prod_prv_subnet_B" {
-    vpc_id = aws_vpc.prod_vpc.id
-    cidr_block = var.cidr_blocks["prod-prv-cidr-B"]
-    availability_zone = var.AZ-names["prv-az-B"]
-    map_public_ip_on_launch = false
-    tags = var.prod_prv_subnet_B_tags
-}  
+  vpc_id                  = aws_vpc.prod_vpc.id
+  cidr_block              = var.cidr_blocks["prod-prv-cidr-B"]
+  availability_zone       = var.AZ-names["prv-az-B"]
+  map_public_ip_on_launch = false
+  tags                    = var.prod_prv_subnet_B_tags
+}
 
 # Create PUBLIC subnet A - PROD
 resource "aws_subnet" "prod_pub_subnet_A" {
-    vpc_id = aws_vpc.prod_vpc.id
-    cidr_block = var.cidr_blocks["prod-pub-cidr-A"]
-    availability_zone = var.AZ-names["pub-az-A"]
-    map_public_ip_on_launch = true
-    tags = var.prod_pub_subnet_A_tags
-}  
+  vpc_id                  = aws_vpc.prod_vpc.id
+  cidr_block              = var.cidr_blocks["prod-pub-cidr-A"]
+  availability_zone       = var.AZ-names["pub-az-A"]
+  map_public_ip_on_launch = true
+  tags                    = var.prod_pub_subnet_A_tags
+}
 
 # Create PUBLIC subnet B - PROD
 resource "aws_subnet" "prod_pub_subnet_B" {
-    vpc_id = aws_vpc.prod_vpc.id
-    cidr_block = var.cidr_blocks["prod-pub-cidr-B"]
-    availability_zone = var.AZ-names["pub-az-B"]
-    map_public_ip_on_launch = true
-    tags = var.prod_pub_subnet_B_tags
-} 
+  vpc_id                  = aws_vpc.prod_vpc.id
+  cidr_block              = var.cidr_blocks["prod-pub-cidr-B"]
+  availability_zone       = var.AZ-names["pub-az-B"]
+  map_public_ip_on_launch = true
+  tags                    = var.prod_pub_subnet_B_tags
+}
 
 # Elastic-IP (eip) for NAT - PROD
 resource "aws_eip" "prod_nat_eip" {
   vpc        = true
   depends_on = [aws_internet_gateway.prod_igw]
-  tags = var.prod_eip_tags
+  tags       = var.prod_eip_tags
 }
 
 # Create NAT - PROD
 resource "aws_nat_gateway" "prod_nat" {
   allocation_id = aws_eip.prod_nat_eip.id
   subnet_id     = aws_subnet.prod_pub_subnet_A.id
-  tags = var.prod_nat_tags
+  tags          = var.prod_nat_tags
 }
 
 # Create routing tables to route traffic for Private Subnet - PROD
 resource "aws_route_table" "prod_prv_rt" {
   vpc_id = aws_vpc.prod_vpc.id
-  tags = var.prod_prv_rt_tags
+  tags   = var.prod_prv_rt_tags
 }
 
 # Create routing tables to route traffic for Public Subnet - PROD
 resource "aws_route_table" "prod_pub_rt" {
   vpc_id = aws_vpc.prod_vpc.id
-  tags = var.prod_pub_rt_tags
+  tags   = var.prod_pub_rt_tags
 }
 
 # Create route for Internet Gateway - PROD
@@ -217,7 +222,7 @@ resource "aws_route_table_association" "prod_prv_rt_asoc_B" {
 
 # Default Security Group of VPC
 resource "aws_security_group" "prod_default_sg" {
-  name = "PROD-DEFAULT-SG"
+  name        = "PROD-DEFAULT-SG"
   description = "Allows basic inbound connectivity via HTTP(s) and SSH"
   vpc_id      = aws_vpc.prod_vpc.id
   depends_on = [
@@ -226,13 +231,13 @@ resource "aws_security_group" "prod_default_sg" {
 
   dynamic "ingress" {
     for_each = local.ingress_rules
-    iterator = rule 
+    iterator = rule
 
     content {
       description = rule.value.description
-      from_port = rule.value.port
-      to_port = rule.value.port
-      protocol = rule.value.protocol
+      from_port   = rule.value.port
+      to_port     = rule.value.port
+      protocol    = rule.value.protocol
       cidr_blocks = ["0.0.0.0/0"]
     }
   }
@@ -281,77 +286,77 @@ resource "aws_security_group" "prod_default_sg" {
 
 # Create new VPC - NONPROD
 resource "aws_vpc" "nonprod_vpc" {
-  cidr_block = var.cidr_blocks["nonprod-vpc"]
+  cidr_block           = var.cidr_blocks["nonprod-vpc"]
   enable_dns_hostnames = true
-  tags = var.nonprod_vpc_tags
+  tags                 = var.nonprod_vpc_tags
 }
 
 # Internet Gateway for Public Subnet - NONPROD
 resource "aws_internet_gateway" "nonprod_igw" {
   vpc_id = aws_vpc.nonprod_vpc.id
-  tags = var.nonprod_igw_tags
+  tags   = var.nonprod_igw_tags
 }
 
 # Create PRIVATE subnet A - NONPROD
 resource "aws_subnet" "nonprod_prv_subnet_A" {
-    vpc_id = aws_vpc.nonprod_vpc.id
-    cidr_block = var.cidr_blocks["nonprod-prv-cidr-A"]
-    availability_zone = var.AZ-names["prv-az-A"]
-    map_public_ip_on_launch = false
-    tags = var.nonprod_prv_subnet_A_tags
-}  
+  vpc_id                  = aws_vpc.nonprod_vpc.id
+  cidr_block              = var.cidr_blocks["nonprod-prv-cidr-A"]
+  availability_zone       = var.AZ-names["prv-az-A"]
+  map_public_ip_on_launch = false
+  tags                    = var.nonprod_prv_subnet_A_tags
+}
 
 # Create PRIVATE subnet B - NONPROD
 resource "aws_subnet" "nonprod_prv_subnet_B" {
-    vpc_id = aws_vpc.nonprod_vpc.id
-    cidr_block = var.cidr_blocks["nonprod-prv-cidr-B"]
-    availability_zone = var.AZ-names["prv-az-B"]
-    map_public_ip_on_launch = false
-    tags = var.nonprod_prv_subnet_B_tags
-}  
+  vpc_id                  = aws_vpc.nonprod_vpc.id
+  cidr_block              = var.cidr_blocks["nonprod-prv-cidr-B"]
+  availability_zone       = var.AZ-names["prv-az-B"]
+  map_public_ip_on_launch = false
+  tags                    = var.nonprod_prv_subnet_B_tags
+}
 
 # Create PUBLIC subnet A - NONPROD
 resource "aws_subnet" "nonprod_pub_subnet_A" {
-    vpc_id = aws_vpc.nonprod_vpc.id
-    cidr_block = var.cidr_blocks["nonprod-pub-cidr-A"]
-    availability_zone = var.AZ-names["pub-az-A"]
-    map_public_ip_on_launch = true
-    tags = var.nonprod_pub_subnet_A_tags
-}  
+  vpc_id                  = aws_vpc.nonprod_vpc.id
+  cidr_block              = var.cidr_blocks["nonprod-pub-cidr-A"]
+  availability_zone       = var.AZ-names["pub-az-A"]
+  map_public_ip_on_launch = true
+  tags                    = var.nonprod_pub_subnet_A_tags
+}
 
 # Create PUBLIC subnet B - NONPROD
 resource "aws_subnet" "nonprod_pub_subnet_B" {
-    vpc_id = aws_vpc.nonprod_vpc.id
-    cidr_block = var.cidr_blocks["nonprod-pub-cidr-B"]
-    availability_zone = var.AZ-names["pub-az-B"]
-    map_public_ip_on_launch = true
-    tags = var.nonprod_pub_subnet_B_tags
-} 
+  vpc_id                  = aws_vpc.nonprod_vpc.id
+  cidr_block              = var.cidr_blocks["nonprod-pub-cidr-B"]
+  availability_zone       = var.AZ-names["pub-az-B"]
+  map_public_ip_on_launch = true
+  tags                    = var.nonprod_pub_subnet_B_tags
+}
 
 # Elastic-IP (eip) for NAT - NONPROD
 resource "aws_eip" "nonprod_nat_eip" {
   vpc        = true
   depends_on = [aws_internet_gateway.nonprod_igw]
-  tags = var.nonprod_eip_tags
+  tags       = var.nonprod_eip_tags
 }
 
 # Create NAT - NONPROD
 resource "aws_nat_gateway" "nonprod_nat" {
   allocation_id = aws_eip.nonprod_nat_eip.id
   subnet_id     = aws_subnet.nonprod_pub_subnet_A.id
-  tags = var.nonprod_nat_tags
+  tags          = var.nonprod_nat_tags
 }
 
 # Create routing tables to route traffic for Private Subnet - NONPROD
 resource "aws_route_table" "nonprod_prv_rt" {
   vpc_id = aws_vpc.nonprod_vpc.id
-  tags = var.nonprod_prv_rt_tags
+  tags   = var.nonprod_prv_rt_tags
 }
 
 # Create routing tables to route traffic for Public Subnet - NONPROD
 resource "aws_route_table" "nonprod_pub_rt" {
   vpc_id = aws_vpc.nonprod_vpc.id
-  tags = var.nonprod_pub_rt_tags
+  tags   = var.nonprod_pub_rt_tags
 }
 
 # Create route for Internet Gateway - NONPROD
@@ -396,22 +401,22 @@ resource "aws_route_table_association" "nonprod_prv_rt_asoc_B" {
 
 # Default Security Group of VPC
 resource "aws_security_group" "nonprod_default_sg" {
-  name = "NONPROD-DEFAULT-SG"
+  name        = "NONPROD-DEFAULT-SG"
   description = "Allows basic inbound connectivity via HTTP(s) and SSH"
   vpc_id      = aws_vpc.nonprod_vpc.id
   depends_on = [
     aws_vpc.nonprod_vpc
   ]
 
-    dynamic "ingress" {
+  dynamic "ingress" {
     for_each = local.ingress_rules
-    iterator = rule 
+    iterator = rule
 
     content {
       description = rule.value.description
-      from_port = rule.value.port
-      to_port = rule.value.port
-      protocol = rule.value.protocol
+      from_port   = rule.value.port
+      to_port     = rule.value.port
+      protocol    = rule.value.protocol
       cidr_blocks = ["0.0.0.0/0"]
     }
   }

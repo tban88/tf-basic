@@ -12,8 +12,6 @@ provider "aws" {
   profile = var.aws_profile
 }
 
-resource "aws_lb_target_group_attachment" "target_lb_asoc" {
-  target_group_arn = var.tg_arn
-  target_id        = var.ec2_id
-  port             = var.port
+resource "aws_secretsmanager_secret" "dockerhub" {
+  name = var.name
 }

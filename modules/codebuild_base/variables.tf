@@ -9,12 +9,14 @@ variable "aws_profile" {
   default     = "default"
 }
 
-variable "nat_name" {
-  type        = string
-  description = "NAT's name"
+variable "aws_account" {
+  type = string
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "Public subnet ID"
+variable "name" {
+  type = string
+}
+
+variable "git_repo" {
+  type = string
 }

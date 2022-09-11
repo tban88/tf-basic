@@ -4,13 +4,13 @@ variable "region" {
 }
 
 variable "aws_profile" {
-  type = string
+  type        = string
   description = "AWS profile"
-  default = "default"
+  default     = "default"
 }
 
 variable "instance_type" {
-  type = string
+  type    = string
   default = "t2.micro"
 }
 
@@ -30,21 +30,21 @@ variable "ami_id" {
 }
 
 variable "public_ip" {
-  type = bool
+  type    = bool
   default = false
 }
 
 variable "key_pair" {
-  type = string
+  type    = string
   default = "test-devops"
 }
 
 variable "user_data" {
-  type = string
+  type    = string
   default = "./modules/ec2/user_data/default.sh"
 }
 
 variable "ec2_name" {
-  type = string
+  type    = string
   default = "TERRAFORM-EC2"
 }

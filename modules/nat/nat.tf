@@ -8,7 +8,7 @@ terraform {
 
 # Define provided: AWS
 provider "aws" {
-  region = var.region
+  region  = var.region
   profile = var.aws_profile
 }
 
@@ -19,7 +19,7 @@ subnet_id (Needs to be public)
 */
 
 resource "aws_eip" "new_eip" {
-  vpc      = true
+  vpc = true
   tags = {
     "Name" = "${upper(var.nat_name)}-EIP"
   }
@@ -27,7 +27,7 @@ resource "aws_eip" "new_eip" {
 
 resource "aws_nat_gateway" "new_nat" {
   allocation_id = aws_eip.new_eip.id
-  subnet_id = var.subnet_id
+  subnet_id     = var.subnet_id
   tags = {
     "Name" = "${upper(var.nat_name)}-NAT"
   }

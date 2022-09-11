@@ -1,27 +1,27 @@
 variable "region" {
-  type    = string
-  default = "us-east-1"
+  type        = string
+  default     = "us-east-1"
   description = "Main region"
 }
 
 variable "aws_profile" {
-  type = string
+  type        = string
   description = "AWS profile"
-  default = "default"
+  default     = "default"
 }
 
 variable "tg_arn" {
-  type = string
+  type        = string
   description = "Target Group ARN"
 }
 
 variable "ec2_id" {
-    type = string
-    description = "EC2-ID to bind target group"
+  type        = string
+  description = "EC2-ID to bind target group"
 }
 
 variable "port" {
-    type = number
-    description = "Target Group listening port"
-    default = 80
+  type        = number
+  description = "Target Group listening port"
+  default     = 80
 }

@@ -44,7 +44,7 @@ module "prod_tg_devops" {
   health_path     = "/"
   health_port     = 80
   health_protocol = "HTTP"
-  target_type = "ip"
+  target_type     = "ip"
 }
 
 module "pub_lb_listener" {
@@ -55,24 +55,46 @@ module "pub_lb_listener" {
 }
 
 module "ec2-jenkins" {
-  source = "./modules/ec2"
-  user_data = "./modules/ec2/user_data/jenkins.sh"
-  ami_id = "ami-052efd3df9dad4825"
-  instance_type = "t2.medium"
-  public_ip = true
-  subnet_id = "${module.vpc.prod_pub_subnet_A_data.id}"
-  key_pair = "test-devops"
-  vpc_id = "${module.vpc.prod_vpc_data.id}"
-  security_group_id = "${module.vpc.prod_df_sg_data.id}"
-  ec2_name = "Jenkins"
-  aws_profile = var.aws_profile
+  source            = "./modules/ec2"
+  user_data         = "./modules/ec2/user_data/jenkins.sh"
+  ami_id            = "ami-052efd3df9dad4825"
+  instance_type     = "t2.medium"
+  public_ip         = true
+  subnet_id         = module.vpc.prod_pub_subnet_A_data.id
+  key_pair          = "test-devops"
+  vpc_id            = module.vpc.prod_vpc_data.id
+  security_group_id = module.vpc.prod_df_sg_data.id
+  ec2_name          = "Jenkins"
+  aws_profile       = var.aws_profile
+}
+
+###### TEST
+module "codebuild1" {
+  source      = "./modules/codebuild_base"
+  git_repo    = "null"
+  aws_account = "219545058254"
+  name        = "gorito-site"
+}
+
+## https://github.com/terraform-aws-modules/terraform-aws-ecr
+module "ecr" {
+  source = "./modules/ecr_base"
+  name   = "gorito-site"
+}
+
+module "secret" {
+  source = "./modules/secrets_base"
+  name   = "dockerhub/credentials"
+
+}
+
+module "ecs_cluster" {
+  source = "./modules/ecs_base"
+  name   = "prod"
 }
 
 /*
-Create CB proyect
-Create ECR repo
-Create ECS cluster
-Create Roles
-Create Policies
-Create Secret for DH
+1. set keypair
+2. set credentials in secret manager
+3. deploy TF
 */
