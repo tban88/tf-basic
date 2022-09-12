@@ -72,20 +72,24 @@ module "ec2-jenkins" {
 module "codebuild1" {
   source      = "./modules/codebuild_base"
   git_repo    = "null"
-  aws_account = "219545058254"
-  name        = "gorito-site"
+  aws_account = "810102036360"
+  name        = "clarity-ui"
 }
 
 ## https://github.com/terraform-aws-modules/terraform-aws-ecr
 module "ecr" {
   source = "./modules/ecr_base"
-  name   = "gorito-site"
+  name   = "clarity-ui"
 }
 
 module "secret" {
   source = "./modules/secrets_base"
   name   = "dockerhub/credentials"
+}
 
+module "secret_sentry" {
+  source = "./modules/secrets_base"
+  name   = "sentry/credentials"
 }
 
 module "ecs_cluster" {
