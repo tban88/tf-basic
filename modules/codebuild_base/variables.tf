@@ -17,6 +17,10 @@ variable "name" {
   type = string
 }
 
-variable "git_repo" {
+variable "git_repo_url" {
+  type = string
+}
+
+variable "source_type" {
   type = string
 }
