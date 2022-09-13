@@ -205,8 +205,8 @@ resource "aws_iam_policy" "ECS_KMS" {
         "Effect" : "Allow",
         "Action" : "kms:*",
         "Resource" : [
-          "arn:aws:kms:*:933158575840:key/*",
-          "arn:aws:kms:*:933158575840:alias/*"
+          "arn:aws:kms:*:${var.aws_account}:key/*",
+          "arn:aws:kms:*:${var.aws_account}:alias/*"
         ]
       }
     ]
@@ -355,11 +355,14 @@ resource "aws_iam_role_policy_attachment" "role-attach6" {
 resource "aws_cloudwatch_log_group" "prod" {
   name = "/aws/ecs/prod"
 }
+resource "aws_cloudwatch_log_group" "feature" {
+  name = "/aws/ecs/feature"
+}
 
 resource "aws_codebuild_project" "new_codebuild" {
   name          = var.name
   description   = "${var.name} project"
-  build_timeout = "5"
+  build_timeout = "60"
   service_role  = aws_iam_role.new_role.arn
 
   artifacts {
@@ -374,8 +377,8 @@ resource "aws_codebuild_project" "new_codebuild" {
   }
 
   source {
-    type            = "GITHUB"
-    location        = "https://github.com/tban88/gorito-site.git"
+    type            = var.source_type
+    location        = var.git_repo_url
     git_clone_depth = 1
 
     git_submodules_config {
