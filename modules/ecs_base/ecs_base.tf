@@ -12,7 +12,7 @@ provider "aws" {
   profile = var.aws_profile
 }
 
-resource "aws_ecs_cluster" "foo" {
+resource "aws_ecs_cluster" "new_ecs" {
   name = var.name
 
   setting {
