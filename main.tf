@@ -54,14 +54,20 @@ module "pub_lb_listener" {
   target_arn  = module.prod_tg_devops.tg_arn
 }
 
-module "ec2-jenkins" {
+module "ec2_key_pair" {
+  source = "./modules/ec2/key_pair"
+  key_name = "test-devops"
+  pub_key_path = file("./modules/ec2/ssh/test-devops.pub")
+}
+
+module "ec2_jenkins" {
   source            = "./modules/ec2"
   user_data         = "./modules/ec2/user_data/jenkins.sh"
   ami_id            = "ami-052efd3df9dad4825"
   instance_type     = "t2.medium"
   public_ip         = true
   subnet_id         = module.vpc.prod_pub_subnet_A_data.id
-  key_pair          = "test-devops"
+  key_pair          = module.ec2_key_pair.key_name
   vpc_id            = module.vpc.prod_vpc_data.id
   security_group_id = module.vpc.prod_df_sg_data.id
   ec2_name          = "Jenkins"
@@ -69,36 +75,35 @@ module "ec2-jenkins" {
 }
 
 ###### TEST
-module "codebuild1" {
+module "codebuild_project" {
   source      = "./modules/codebuild_base"
-  git_repo    = "null"
-  aws_account = "810102036360"
+  git_repo_url =  "https://github.com/tban88/gorito-site.git"
+  source_type = "GITHUB"
+  aws_account = "298039135746"
   name        = "clarity-ui"
 }
 
 ## https://github.com/terraform-aws-modules/terraform-aws-ecr
-module "ecr" {
+module "ecr_repo" {
   source = "./modules/ecr_base"
   name   = "clarity-ui"
 }
 
-module "secret" {
+module "secret_dockerhub" {
   source = "./modules/secrets_base"
   name   = "dockerhub/credentials"
 }
 
-module "secret_sentry" {
-  source = "./modules/secrets_base"
-  name   = "sentry/credentials"
-}
-
-module "ecs_cluster" {
+module "ecs_prod" {
   source = "./modules/ecs_base"
   name   = "prod"
 }
 
+module "ecs_feature" {
+  source = "./modules/ecs_base"
+  name   = "feature"
+}
+
 /*
-1. set keypair
-2. set credentials in secret manager
-3. deploy TF
+1. set credentials in secret manager
 */
